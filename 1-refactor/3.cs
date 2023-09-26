@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Example3
 {
@@ -11,128 +7,111 @@ namespace Example3
     {
         static void Main(string[] args)
         {
-            //Подключение файла и чтение строки из него
-            string path = @"E:\Учёба\ЯП\ЛР8\8.2\Text2.txt";
+            // Подключение файла и чтение строки из него
+            string path = @"../Text.txt";
             StreamReader text = new StreamReader(path);
             string line = text.ReadLine();
             text.Close();
 
-            //Разбиение строки с помощью разделителя ". "
-            string[] ourhistory = line.Split(new string[] { ". " }, StringSplitOptions.RemoveEmptyEntries);
-            string[] WordsInText = line.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            // Разбиение текста на предложения
+            string[] sentences = line.Split(". ", StringSplitOptions.RemoveEmptyEntries);
+            string[] wordsInText = line.Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
-            //Объявление переменных
-            int i;
-            int k;
-            int j;
-            int vowelmaxposition = 0;
-            char PenultimateLetter;
-            char LastLetter;
-            string str;
-            string clipboardstring;
-            int clipboardint;
-            int[] Vowels = new int[WordsInText.Length];
-            int[] WordsCount = new int[24];
-            int length = ourhistory.Length;
-            char[] lowercase = { 'а', 'б', 'в', 'г', 'д', 'е', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ы', 'э', 'ю', 'я', 'ё', 'ж', 'з' };
-            
-            //Соединиение строк для образования предложений
-            for (i = 0; i < length; i++)
+            const int NUMBER_OF_SENTENCES = 24;
+            HashSet<char> lowercase = HashSet<char> { 'а', 'б', 'в', 'г', 'д', 'е', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ы', 'э', 'ю', 'я', 'ё', 'ж', 'з' };
+            int sentencesLength = sentences.Length;            
+
+            // Соединиение строк для образования предложений
+            for (int i = 0; i < sentencesLength; i++)
             {
-                k = ourhistory.Length - 1 - i;
-                str = ourhistory[k];
-                PenultimateLetter = str[str.Length - 2];
-                LastLetter = str[str.Length - 1];
-                for (j = 0; j < lowercase.Length; j++)
-                {
-                    if (str[0] == lowercase[j])
-                    {
-                        ourhistory[k - 1] += ". " + ourhistory[k];
-                        for (j = k; j < length - 1; j++) ourhistory[j] = ourhistory[j + 1];
-                    }
+                int k = sentences.Length - 1 - i;
+                string sentence = sentences[k];
+
+                char secontToLastLetter = sentence[sentence.Length - 2];
+                char lastLetter = sentence[sentence.Length - 1];
+
+                if (lowercase.Contains(sentence[0])) {
+                    sentences[k - 1] += ". " + sentences[k];
+                    for (int j = k; j < sentencesLength - 1; j++) 
+                        sentences[j] = sentences[j + 1];
                 }
-                if (LastLetter == 'г' & (PenultimateLetter == '.' || PenultimateLetter == 'г') || PenultimateLetter == ' ')
-                {
-                    ourhistory[k] += ". " + ourhistory[k + 1];
-                    for (j = k + 1; j < length - 1; j++) ourhistory[j] = ourhistory[j + 1];
-                }
-            }
 
-            //Подсчёт слов в строках
-            for (i = 0; i < 24; i++)
-            {
-                str = ourhistory[i];
-                for (j = 0; j < str.Length; j++) if (str[j] == ' ') WordsCount[i]++;
-            }
-
-            str = "Hello";
-            str = str.Remove(0, str.Length - 3);
-            str = str.Substring(0, str.Length - 3);
-
-
-            //Нахождение стова с наибольшим количеством гласных подряд
-            str = WordsInText[0];
-            Vowels[0] = VowelsCount(str);
-            int vowelmax = Vowels[0];
-            for (i = 1; i < WordsInText.Length; i++)
-            {
-                str = WordsInText[i];
-                Vowels[i] = VowelsCount(str);
-                Console.WriteLine(Vowels[i]);
-                if (Vowels[i] > vowelmax)
-                {
-                    vowelmax = Vowels[i];
-                    vowelmaxposition = i;
-                }
-            }
-
-            //Сортировка строчного массива по возрастанию количества содержащихся в них слов
-            for (i = 0; i < 24; i++)
-            {
-                for (j = i + 1; j < 24; j++)
-                {
-                    if (WordsCount[i] > WordsCount[j])
-                    {
-                        clipboardstring = ourhistory[j];
-                        ourhistory[j] = ourhistory[i];
-                        ourhistory[i] = clipboardstring;
-                        clipboardint = WordsCount[j];
-                        WordsCount[j] = WordsCount[i];
-                        WordsCount[i] = clipboardint;
+                bool patterMatched = (lastLetter == 'г' && (secontToLastLetter == '.' || secontToLastLetter == 'г') || secontToLastLetter == ' ');
+                if (patterMatched) {
+                    sentences[k] += ". " + sentences[k + 1];
+                    for (int j = k + 1; j < sentencesLength - 1; j++) { 
+                        sentences[j] = sentences[j + 1];
                     }
                 }
             }
 
-            //Вывод
-            for (j = 0; j < 24; j++)
-            {
-                ourhistory[j] += ".";
-                WordsCount[j]++;
-                Console.WriteLine((j + 1) + ")" + ourhistory[j] + " Количество слов: " + WordsCount[j]);
+            // Подсчёт слов в строках
+            int[] wordsInSentence = countWordsInText(sentences);
+
+            // Нахождение слова с наибольшим количеством гласных подряд
+            int consonantMaxPosition = mostConsecutiveСonsonantsPosition(wordsInText);
+            int consonantMax = consonantCount(wordsInText[consonantMaxPosition]);
+
+            // Сортировка строчного массива по возрастанию количества содержащихся в них слов
+            Array.Sort(sentences, (x, y) => x.Length.CompareTo(y.Length));
+
+            // Вывод
+            for (int j = 0; j < NUMBER_OF_SENTENCES; j++) {
+                sentences[j] += ".";
+                wordsInSentence[j]++;
+                Console.WriteLine((j + 1) + ")" + sentences[j] + " Количество слов: " + wordsInSentence[j]);
             }
-            Console.WriteLine("\nСлово с наибольшим количестовм согласных, идущих подряд: {0}. Количество согласных, идущих подряд: {1}", WordsInText[vowelmaxposition], vowelmax);
+
+            Console.WriteLine($"Слово с наибольшим количестовм согласных, идущих подряд: {wordsInText[consonantMaxPosition]}");
+            Console.WriteLine($"Количество согласных, идущих подряд: {consonantMax}");
             Console.ReadLine();
         }
 
-        static int VowelsCount(string str)
-        {
-            int vowelcount = 0;
-            int vowelcount1 = 0;
-            for (int k = 0; k < str.Length; k++)
-            {
-                vowelcount1 = 0;
-                if (str[k] == 'б' || str[k] == 'й' || str[k] == 'ц' || str[k] == 'к' || str[k] == 'н' || str[k] == 'г' || str[k] == 'ш' || str[k] == 'щ' || str[k] == 'х' || str[k] == 'ъ' || str[k] == 'ф' || str[k] == 'в' || str[k] == 'п' || str[k] == 'р' || str[k] == 'л' || str[k] == 'д' || str[k] == 'ж' || str[k] == 'ь' || str[k] == 'ч' || str[k] == 'с' || str[k] == 'м' || str[k] == 'т')
-                {
-                    vowelcount1++;
-                    for (int i = k + 1; i < str.Length; i++)
-                    {
-                        if (str[i] == 'б' || str[i] == 'й' || str[i] == 'ц' || str[i] == 'к' || str[i] == 'н' || str[i] == 'г' || str[i] == 'ш' || str[i] == 'щ' || str[i] == 'х' || str[i] == 'ъ' || str[i] == 'ф' || str[i] == 'в' || str[i] == 'п' || str[i] == 'р' || str[i] == 'л' || str[i] == 'д' || str[i] == 'ж' || str[i] == 'ь' || str[i] == 'ч' || str[i] == 'с' || str[i] == 'м' || str[i] == 'т') vowelcount1++;
-                        else break;
-                    }
-                    if (vowelcount < vowelcount1) vowelcount = vowelcount1;
+        int[] countWordsInText(string[] text) {
+            int textLength = text.Length;
+            int[] wordsInSentence = new int[textLength];
+
+            for (int i = 0; i < textLength; i++) {
+                string sentence = text[i];
+                wordsInSentence[i] = sentence.Count(x => x == ' ');
+            }
+            return wordsInSentence;
+        }
+
+        int mostConsecutiveСonsonantsPosition(string[] words) {
+            int consonantMaxPosition = 0;
+            int consonantMax = consonantCount(wordsInText[0]);
+            for (int i = 1; i < wordsInText.Length; i++) {
+                int consonantNumber = consonantCount(wordsInText[i]);
+                if (consonantNumber > consonantMax) {
+                    consonantMax = consonantNumber;
+                    consonantMaxPosition = i;
                 }
             }
-            return vowelcount;
+            return consonantMaxPosition;
+        }
+
+        int consonantCount(string str)
+        {
+            HashSet<char> consonants = new HashSet<char> {'б', 'в', 'г', 'д', 'ж', 'з', 'й', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ'};
+            int consonantCountMax = 0;
+            int consonantCountCurrent = 0;
+            bool previousConsonant = false;
+            for (int k = 0; k < str.Length; k++)
+            {
+                if (consonants.Contains(str[k])) {
+                    consonantCountCurrent++;
+                    previousConsonant = true;
+                    continue;
+                } 
+                consonantCountMax = (consonantCountCurrent > consonantCountMax)
+                    ? consonantCountCurrent
+                    : consonantCountMax;
+
+                consonantCountCurrent = 0;
+                previousConsonant = false;
+            }
+            return consonantCountMax;
         }
     }
 }

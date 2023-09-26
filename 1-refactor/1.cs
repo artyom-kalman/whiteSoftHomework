@@ -1,29 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Example1
 {
+    class Point {
+        int x;
+        int y;
+
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public getDistanceFromOrigin() {
+            return Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
+        }
+    }
+
     class Program
     {
         static void Main(string[] args)
         {
-            System.Console.WriteLine("Введите координату x точки A : ");
-            int xA = Convert.ToInt32(Console.ReadLine());
-            System.Console.WriteLine("Введите координату y точки A : ");
-            int yA = Convert.ToInt32(Console.ReadLine());
-            System.Console.WriteLine("Введите координату x точки B : ");
-            int xB = Convert.ToInt32(Console.ReadLine());
-            System.Console.WriteLine("Введите координату y точки B : ");
-            int yB = Convert.ToInt32(Console.ReadLine());
-            double lA = Math.Sqrt(Math.Pow(xA,2) + Math.Pow(yA, 2));
-            double lB = Math.Sqrt(Math.Pow(xB, 2) + Math.Pow(yB, 2));
-            if (lA > lB) System.Console.WriteLine("Точка А находиться дальше от начала координат");
-            if (lA < lB) System.Console.WriteLine("Точка В находиться дальше от начала координат");
-            if (lA == lB) System.Console.WriteLine("Точки А и В одинаково отдалены от начала координат");
-            System.Console.ReadLine();
+            Point pointA = newPointFromInput();
+
+            Point pointB = newPointFromInput();
+
+            comparePoints(pointA, pointB);
+        }
+
+        Point newPointFromInput() {
+            Console.WriteLine("Введите координаты точки: ");
+            string[] input = Console.ReadLine().split(' ');
+            int x = int.Parse(input[0]);
+            int y = int.Parse(input[1]);
+            return new Point(xA, yA);
+        }
+
+        void comparePoints(Point A, Point B) {
+            int distanceA = A.getDistanceFromOrigin();
+            int distanceB = B.getDistanceFromOrigin();
+
+            if (distanceA > distanceB) {
+                Console.WriteLine("Точка А находиться дальше от начала координат");
+                return;
+            }
+            if (distanceA < distanceB) {
+                Console.WriteLine("Точка В находиться дальше от начала координат");
+                return;
+            }
+            Console.WriteLine("Точки равноудалены от начала координат");
         }
     }
 }

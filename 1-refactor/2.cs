@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Example2
 {
@@ -10,73 +7,85 @@ namespace Example2
     {
         static void Main(string[] args)
         {
-            //Ввод ФИО
+            // Ввод ФИО
             Console.Write("Введите фамилию: ");
-            string secondname = Console.ReadLine();
+            string surname = Console.ReadLine();
+
             Console.Write("Введите имя: ");
             string name = Console.ReadLine();
+
             Console.Write("Введите отчество: ");
-            string lastname = Console.ReadLine();
+            string patronimyc = Console.ReadLine();
 
-            //Создание строки
-            string line = new String('-', 20);
-            Console.WriteLine(line);
-            string fio = secondname + " " + name + " " + lastname; 
-            Console.WriteLine("ФИО:");
-            Console.WriteLine(fio);
-            
+            // Создание строки
+            string fio = $"{surname} {name} {patronimyc}"; 
+            Console.WriteLine($"ФИО: {fio}");
 
-            //Длина строки
-            int length = fio.Length;
-            Console.WriteLine("1.1) Длина строки: " + length);
+            // Длина строки
+            int fioLength = fio.Length;
+            Console.WriteLine($"1.1) Длина строки: {fioLength}");
 
-            //Кол-во совпадающих букв
-            char s2 = fio[1];
-            int s2count = 0;
-            for (int i = 0; i < length; i++)
-            {
-                if (fio[i] == s2) s2count++;
-            }
-            Console.WriteLine("1.2) Количество букв в строке, сопадающих со второй буквой фамилии: " + s2count);
+            // Кол-во совпадающих букв
+            int secondLetterСount = matchingLetters(2);
+            Console.WriteLine($"1.2) Количество букв в строке, сопадающих со второй буквой фамилии: {secondLetterСount}");
 
-            //Разделение строки
-            string[] fioarr = fio.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            secondname = fioarr[0];
-            name = fioarr[1];
-            lastname = fioarr[2];
+            // Разделение строки
+            string[] fioArray = fio.Split(' ');
+            surname = fioArray[0];
+            name = fioArray[1];
+            patronimyc = fioArray[2];
 
-            //Замена строчных на прописные
-            int lastnamelength = lastname.Length;
-            for (int i = 0; i < lastnamelength; i++)
-            {
-                char letter = lastname[i];
-                if (letter == 'а' || letter == 'у' || letter == 'е' || letter == 'о' || letter == 'э' || letter == 'я' || letter == 'и' || letter == 'ю')
-                {
-                    letter = Char.ToUpper(letter);
-                    lastname = lastname.Replace(fio[i], letter);
-                }
-            }
-            Console.WriteLine("1.4) Замена строчных на прописные в отчестве: " + lastname);
+            // Замена строчных на прописные
+            // В отчестве заменить гласные строчные буквы на прописные
+            patronimyc = vowelToUpperCase(patronimyc);
+            Console.WriteLine($"1.4) Замена строчных на прописные в отчестве: {patronimyc}");
 
-            //Преобразование строк в StringBuilder
-            StringBuilder secondnamesb = new StringBuilder(secondname);
-            StringBuilder namesb = new StringBuilder(name);
-            StringBuilder lastnamesb = new StringBuilder(lastname);
+            // Преобразование строк в StringBuilder
+            StringBuilder surnameSb = new StringBuilder(surname);
+            StringBuilder nameSb = new StringBuilder(name);
+            StringBuilder patronimycSb = new StringBuilder(patronimyc);
 
-            //Вставить между буквами фамилии и имени знак '-'
-            int namelength = namesb.Length;
-            int secondnamelength = secondnamesb.Length;
-            for (int i = 1; i <  namelength; i++) namesb.Insert(namelength - i, "-");
-            for (int i = 1; i < secondnamelength; i++) secondnamesb.Insert(secondnamelength - i, "-");
-            Console.WriteLine("1.6) Вставить между буквами фамилии и имени знак '-': {0} {1}" , namesb , secondnamesb);
+            // Вставить между буквами фамилии и имени знак '-'
+            nameSb = insertDashBetweenEveryLetter(nameSb);
+            surnameSb = insertDashBetweenEveryLetter(surnameSb);
+            Console.WriteLine($"1.6) Вставить между буквами фамилии и имени знак '-': {nameSb} {surnameSb}");
 
-            //Объединение строк класса String Builder и добавление комментария
-            StringBuilder fiosb = secondnamesb;
-            fiosb.Append(" " + namesb + " " + lastnamesb);
-            fiosb.Append("\n Выполнил студент группы БО211ПИН");
-            Console.WriteLine("Полученный объект класса StringBuilder: " + fiosb);
+            // Объединение строк класса String Builder и добавление комментария
+            StringBuilder fioSb = $"{surnameSb} {nameSb} {patronimycSb}";
+            fioSb.Append("\n Выполнил студент группы БО211ПИН");
+            Console.WriteLine("Полученный объект класса StringBuilder: " + fioSb);
 
             Console.ReadLine();
+        }
+
+        int matchingLetters(int letterNumber) {
+            char secondLetter = fio[--letterNumber];
+            int matchingLetterСount = 0;
+            foreach (char letter in fio) {
+                if (letter == secondLetter) matchingLetterСount++;
+            }
+            return matchingLetterСount;
+        }
+
+        string vowelToUpperCase(string word) {
+            HashSet<char> vowels = new HashSet<char> {'а', 'у', 'е', 'о', 'э', 'я', 'и', 'ю'};
+            int wordLength = word.Length;
+            for (int i = 0; i < wordLength; i++) {
+                char currentLetter = word[i];
+                if (vowels.Contains(currentLetter)) {
+                    char newLetter = Char.ToUpper(currentLetter);
+                    word = word.Replace(currentLetter, newLetter);
+                }
+            }
+            return word;
+        }
+
+        StringBuilder insertDashBetweenEveryLetter(StringBuilder word) {
+            int wordLength = word.Length;
+            for (int i = 1; i < wordLength; i++) {
+                word.Insert(wordLength - i, "-");
+            }
+            return word;
         }
     }
 }
