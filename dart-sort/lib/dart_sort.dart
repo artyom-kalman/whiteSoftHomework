@@ -19,5 +19,9 @@ List<num> quickSort(List<num> array) {
     var arrayLeft = array.sublist(0, pv);
     var arrayRight = array.sublist(pv + 1);
 
-    return quickSort(arrayLeft) + [array[pv]] + quickSort(arrayRight);
+    return [
+        ...quickSort(arrayLeft),
+        ...[array[pv]],
+        ...quickSort(arrayRight)
+    ];
 }
