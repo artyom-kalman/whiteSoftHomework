@@ -1,10 +1,10 @@
-List<num> quickSort(List<num> array) {
+List<T> quickSort<T extends Comparable<dynamic>>(List<T> array) {
     if (array.length < 2) return array;
 
     var sm = -1;
     var pv = array.length - 1;
     for (var i = 0; i < array.length; i++) {
-        if (array[i] > array[pv]) continue;
+        if (array[i].compareTo(array[pv]) > 0) continue;
 
         sm++;
         if (i == sm) continue;
